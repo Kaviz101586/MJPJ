@@ -20,8 +20,18 @@
         }).then(function (response) {
             // javascript map method - goes through all locations from response and creates new array
             var brand_ids = response.locations.map(function (locations) { return locations.brand_id });
-            console.log("BRAND IDs = " + brand_ids);
+            console.log(response.locations);
+            var Brand_Name_City_State_Website = response.locations.map(function (locations) { 
+                return {
+                    food: userSearchQuery,
+                    brand: locations.brand_id,
+                    restaurant: locations.name,
+                    location: locations.city,
+                    website: locations.website
+                }
+            })
             //console.log("RESPONSE: " + JSON.stringify(response));
+            console.log('Brand_Name_City_State_Website ' + JSON.stringify(Brand_Name_City_State_Website));
 
             // Need to do next AJAX call for search/instant/
             var siURL = 'https://trackapi.nutritionix.com/v2/search/instant';
@@ -45,15 +55,17 @@
                 }
             })
         })
+     /*   .then(function (response) {
+            console.log("SI RESPONSE: " + JSON.stringify(response));
+        });*/
     };
 
 
     function getLocation() {
         if (navigator.geolocation) {
-        // Get your current location if user permits
           navigator.geolocation.getCurrentPosition(getPosition);
         } else {
-         // Ask the user to enter the address if user does not want his location selected for him
+         // Ask the user to enter the address
 
             var geocoder = new google.maps.Geocoder();
             var address = "new york"; // Take this information from the user entry screen
@@ -77,18 +89,17 @@
         }
 
 // Code Execution begins here 
-    var userSearchQuery = 'pizza';
-    const limit = 50;
-    const distance = '10mi';
+var userSearchQuery = 'pizza';
+const limit = 50;
+const distance = '10mi';
 
-    var lat;
-    var long;
+var lat;
+var long;
 
-    var city;
-    var state;
+var city;
+var state;
 
-    getLocation();
-
+getLocation();
 
 
 
