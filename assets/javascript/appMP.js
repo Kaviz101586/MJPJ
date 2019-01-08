@@ -55,9 +55,9 @@
                 }
             })
         })
-     /*   .then(function (response) {
+        .then(function (response) {
             console.log("SI RESPONSE: " + JSON.stringify(response));
-        });*/
+        });
     };
 
 
