@@ -1,9 +1,6 @@
 var Brand_Name_City_State_Website; // the object that holds the AJAX response from the instant search that filters the products based on user location
 var si_Response; // the object that holds the AJAX response from the instant search that filters the products based on user preference value
 
-var results;
-
-
 $(document).ready(function () {
 
     // Need to add any Firebase stuff
@@ -41,20 +38,9 @@ $(document).ready(function () {
     });
         }});
 
-        displayPreferences(firebase_calories, firebase_carbs, firebase_protein, firebase_sugar)
+    // This 
+    displayPreferences(firebase_calories, firebase_carbs, firebase_protein, firebase_sugar)
 
-   // data that will come from Firebase but hard-coding for now.
- /*   var firebase_calories = 500;  // attr_id = 208
-    var firebase_carbs = 400; // attr_id = 205
-    var firebase_protein = 10; // attr_id = 203
-    var firebase_sugar = 13; // attr_id = 269 
-
-
-
-
-    displayPreferences(firebase_calories, firebase_carbs, firebase_protein, firebase_sugar); */
-
-    // Code Execution begins here 
     var ocdkey = "&key=e39eaae9080247218a11a430ebd3a003&limit=1&pretty=1";
     var ocdbase = "https://api.opencagedata.com/geocode/v1/json?q=";
     var userSearchQuery = 'app';
@@ -150,7 +136,7 @@ $(document).ready(function () {
         newSearchCall(food, useMyLocation, address, city, state, zipcode);
 
         // once function returns, need to update table with response
-        addToTable(results);
+       // addToTable(results);
     });
 
     function access_nutritionix_api(userSearchQuery, lat, long, distance, limit) {
@@ -202,7 +188,7 @@ $(document).ready(function () {
                 },
                 method: 'POST',
                 data: {
-                    "query": "app",
+                    "query": userSearchQuery,
                     "common": false,
                     "self": false,
                     "branded": true,
@@ -238,7 +224,8 @@ $(document).ready(function () {
             })
             console.log(response.branded);
             console.log("SI RESPONSE JSON :: " + JSON.stringify(si_Response));  
-            results = consolidateArray();
+            // once function returns consolidated array list, need to update table with response
+            addToTable(consolidateArray());
         });
     };
 
@@ -280,43 +267,28 @@ $(document).ready(function () {
     function consolidateArray(){
 
             var arrayList = [];
-            var results;
+           // var results;
   
             for (var i in si_Response) {
-                
-                var item = Brand_Name_City_State_Website.find(item => item.brand === si_Response[i].brand);
 
-                results = {
-                    brand: si_Response[i].brand,
-                    food: si_Response[i].food,
-                    restaurant: si_Response[i].restaurant,
-                    full_nutrient: si_Response[i].full_nutrient,
-                    location: item.location,
-                    website: item.website
-                }
-                console.log('Results :: '+results);
-
-
-  /*
                 var obj = {
                       food: si_Response[i].food
                     }
                 
-
-
             for (var j in Brand_Name_City_State_Website) {
                 if (Brand_Name_City_State_Website[j].brand === si_Response[i].brand) {
                     obj.brand = Brand_Name_City_State_Website[j].brand; 
                     obj.restaurant = Brand_Name_City_State_Website[j].restaurant;
                     obj.location = Brand_Name_City_State_Website[j].location;
                     obj.website = Brand_Name_City_State_Website[j].website;
+                    obj.distance = Brand_Name_City_State_Website[j].distance;
                 }
             }
-
-            */
-            arrayList.push(results);
+           
+            arrayList.push(obj);
+            console.log("This is the final arrayList values "+ i + " - " + JSON.stringify(arrayList[i]));   
           }
-        console.log(arrayList);   
+
         return arrayList;
     }
 
