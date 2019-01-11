@@ -24,19 +24,20 @@ $(document).ready(function () {
     var uid;
 
     firebase.auth().onAuthStateChanged(function (fbUser) {
-        if (fbUser) {  
+        if (fbUser) {
             var user = firebase.auth().currentUser;
-            uid=user.uid;
-            console.log(uid);    
-            
-            database.ref("users/"+uid).once("value", function(userSnap){
-                var snap=userSnap.val();
+            uid = user.uid;
+            console.log(uid);
+
+            database.ref("users/" + uid).once("value", function (userSnap) {
+                var snap = userSnap.val();
                 $("#Calories").text(snap.calories);
                 $("#Carbs").text(snap.carbs);
                 $("#Protein").text(snap.protein);
                 $("#Sugars").text(snap.sugar);
+            });
+        }
     });
-        }});
 
     // This 
     displayPreferences(firebase_calories, firebase_carbs, firebase_protein, firebase_sugar)
@@ -49,15 +50,6 @@ $(document).ready(function () {
 
     var lat;
     var long;
-
-    var city;
-    var state;
-
-    // need to run this code only after user puts in their search query, address etc.  So need to move
-    // the function call to submit button click handler
-    //getLocation();
-    // PM code ends here
-
 
     function displayPreferences(calories, carbs, protein, sugar) {
         $("#Calories").text(calories);
@@ -77,13 +69,15 @@ $(document).ready(function () {
             // Below creates the new row
             var distan = (Brand_Name_City_State_Website[i].distance / 1.609)
             var dist = distan.toFixed(2)
+            var drive = ("saddr=" + lat + "," + long + "&daddr=" + Brand_Name_City_State_Website[i].loclat + "," + Brand_Name_City_State_Website[i].loclng);
             var newRow = $("<tr>").append(
                 $("<td>").text(arr[i].food),
                 $("<td>").text(arr[i].restaurant),
                 $("<td>").text(arr[i].location),
-                $("<td>").text(dist+"mi"),
-                $("<td>").text(arr[i].website),
-                $("<td>").text(arr[i].address)
+                $("<td>").text(dist + "mi"),
+                $("<td>").text(arr[i].address),
+                $("<button>").text("GO!").addClass("GO-btn").attr("coord", drive),
+                console.log('drive :: ', drive)
             );
 
             // Below appends the new row to the table
@@ -113,44 +107,49 @@ $(document).ready(function () {
         // need to verify all entries to make sure valid or at least user entered data
         // checking that user entered food
         if (food == "") {
-           // alert("Enter valid Food");
-           $("#errorText").text("Enter valid Food");
+            // alert("Enter valid Food");
+            $("#errorText").text("Enter valid Food");
             return;
         }
         // checking if both zip and address are blank
         if (useMyLocation == false && zipcode == "" &&
             (address == "" || city == "" || state == "")) {
-                $("#errorText").text("Enter zipcode or valid address or check Use My Location");
-                 return;
-          //  alert("Enter zipcode or valid address or check Use My Location");
+            $("#errorText").text("Enter zipcode or valid address or check Use My Location");
+            return;
         }
         else if (useMyLocation == true && zipcode != "" && (address != "" || city != "" || state != "")) {
             $("#errorText").text("Please only enter Use My Location or zipcode or address");
-            return;           
-        //    alert("Please only enter Use My Location or zipcode or address");
+            return;
         }
         else if (useMyLocation == true && (address != "" || city != "" || state != "")) {
             $("#errorText").text("Please only enter Use My Location or address");
             return;
-         //   alert("Please only enter Use My Location or address");
         }
         else if (useMyLocation == true && zipcode != "") {
             $("#errorText").text("Please only enter Use My Location or zipcode");
             return;
-          //  alert("Please only enter Use My Location or zipcode");
         }
         else if (zipcode != "" && (address != "" || city != "" || state != "")) {
             $("#errorText").text("Please only enter zipcode or address");
             return;
-          //  alert("Please only enter zipcode or address");
         }
+        //clear out error message
+        $("#errorText").text("");
 
         // if all entries valid, then call Prashanth' function to search
         newSearchCall(food, useMyLocation, address, city, state, zipcode);
 
         // once function returns, need to update table with response
-       // addToTable(results);
+        // addToTable(results);
     });
+
+
+    //JASON you can update this on click function to load the maps
+    $(document).on("click", ".GO-btn", function () {
+        console.log("Coords are:" + ($(this).attr('coord')))
+    });
+
+
 
     function access_nutritionix_api(userSearchQuery, lat, long, distance, limit) {
         var appID = '88905904';
@@ -175,8 +174,7 @@ $(document).ready(function () {
             var brand_ids = response.locations.map(function (locations) { return locations.brand_id });
             console.log(response.locations);
             // returns the JSON object needed in PART A section above for Prashanth's code
-            Brand_Name_City_State_Website = response.locations.map(function (locations) { 
-                var completeAddress = locations.address + ",\n" + locations.city + ", " + locations.state + " " + locations.zip;
+            Brand_Name_City_State_Website = response.locations.map(function (locations) {
                 return {
                     food: userSearchQuery,
                     brand: locations.brand_id,
@@ -184,7 +182,9 @@ $(document).ready(function () {
                     location: locations.city,
                     website: locations.website,
                     distance: locations.distance_km,
-                    address: completeAddress
+                    loclat: locations.lat,
+                    loclng: locations.lng,
+                    address: locations.address + ',\n' + locations.city + ', ' + locations.state + ' ' + locations.zip
                 }
             })
             //console.log("RESPONSE: " + JSON.stringify(response));
@@ -194,7 +194,7 @@ $(document).ready(function () {
             var siURL = 'https://trackapi.nutritionix.com/v2/search/instant';
 
 
-            return  $.ajax({
+            return $.ajax({
                 url: siURL,
                 headers: {
                     'x-app-id': appID,
@@ -210,38 +210,38 @@ $(document).ready(function () {
                     "brand_ids": brand_ids,
                     "detailed": true,
                     "full_nutrients": {
-                      "203": {
-                        "lte": firebase_protein
-                      },
-                      "269": {
-                        "lte": firebase_sugar
-                      },
-                      "205": {
-                        "lte": firebase_carbs
-                      },
-                      "208": {
-                        "lte": firebase_calories
-                      }
+                        "203": {
+                            "lte": firebase_protein
+                        },
+                        "269": {
+                            "lte": firebase_sugar
+                        },
+                        "205": {
+                            "lte": firebase_carbs
+                        },
+                        "208": {
+                            "lte": firebase_calories
+                        }
                     }
-                  }
-            })
-        })
-       .then(function (response) {
-            //console.log("SI RESPONSE: " + JSON.stringify(response));   
-            //This returns the response JSON object as below after filtering the preference values of the user
-            si_Response = response.branded.map(function (branded) { 
-                return {
-                    food: branded.food_name,
-                    brand: branded.nix_brand_id,
-                    restaurant: branded.brand_name,
-                    full_nutrient: branded.full_nutrients
                 }
             })
-            console.log(response.branded);
-            console.log("SI RESPONSE JSON :: " + JSON.stringify(si_Response));  
-            // once function returns consolidated array list, need to update table with response
-            addToTable(consolidateArray());
-        });
+        })
+            .then(function (response) {
+                //console.log("SI RESPONSE: " + JSON.stringify(response));   
+                //This returns the response JSON object as below after filtering the preference values of the user
+                si_Response = response.branded.map(function (branded) {
+                    return {
+                        food: branded.food_name,
+                        brand: branded.nix_brand_id,
+                        restaurant: branded.brand_name,
+                        full_nutrient: branded.full_nutrients
+                    }
+                })
+                console.log(response.branded);
+                console.log("SI RESPONSE JSON :: " + JSON.stringify(si_Response));
+                // once function returns consolidated array list, need to update table with response
+                addToTable(consolidateArray());
+            });
     };
 
     function newSearchCall(food, useMyLocation, address, city, state, zipcode) {
@@ -251,7 +251,7 @@ $(document).ready(function () {
         }
         else {
             // call John's geocoding 
-            var ocdURL = ocdbase +","+ address +","+ city +","+ state +","+ zipcode + ocdkey
+            var ocdURL = ocdbase + "," + address + "," + city + "," + state + "," + zipcode + ocdkey
             openGate(ocdURL);
         }
     }
@@ -268,31 +268,31 @@ $(document).ready(function () {
         $.ajax({
             url: x,
             method: "GET"
-            })
-            .then(function(response) {
+        })
+            .then(function (response) {
                 lat = (response.results[0].geometry.lat)
                 long = (response.results[0].geometry.lng)
                 console.log("Your Latitude :: " + lat);
                 console.log("Your Longitude :: " + long);
-            access_nutritionix_api(userSearchQuery, lat, long, distance, limit);                 
-            })  
+                access_nutritionix_api(userSearchQuery, lat, long, distance, limit);
+            })
     }
 
     // this function looks into 2 array of json objects and return only the records common to both based on brand
-    function consolidateArray(){
+    function consolidateArray() {
 
-            var arrayList = [];
-           // var results;
-  
-            for (var i in si_Response) {
+        var arrayList = [];
+        // var results;
 
-                var obj = {
-                      food: si_Response[i].food
-                    }
-                
+        for (var i in si_Response) {
+
+            var obj = {
+                food: si_Response[i].food
+            }
+
             for (var j in Brand_Name_City_State_Website) {
                 if (Brand_Name_City_State_Website[j].brand === si_Response[i].brand) {
-                    obj.brand = Brand_Name_City_State_Website[j].brand; 
+                    obj.brand = Brand_Name_City_State_Website[j].brand;
                     obj.restaurant = Brand_Name_City_State_Website[j].restaurant;
                     obj.location = Brand_Name_City_State_Website[j].location;
                     obj.website = Brand_Name_City_State_Website[j].website;
@@ -300,10 +300,10 @@ $(document).ready(function () {
                     obj.address = Brand_Name_City_State_Website[j].address;
                 }
             }
-           
+
             arrayList.push(obj);
-            console.log("This is the final arrayList values "+ i + " - " + JSON.stringify(arrayList[i]));   
-          }
+            console.log("This is the final arrayList values " + i + " - " + JSON.stringify(arrayList[i]));
+        }
 
         return arrayList;
     }
