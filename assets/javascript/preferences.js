@@ -11,41 +11,42 @@ Date: 12-Jan-2019
 */
 
 
-console.log("hello"); 
-
 // Initialize Firebase
 
 var config = {
-    apiKey: "AIzaSyC1c1GiOESAxQ8-aEPGYH8Bf2VdsBoTXWw",
-    authDomain: "project1mjpj.firebaseapp.com",
-    databaseURL: "https://project1mjpj.firebaseio.com",
-    projectId: "project1mjpj",
-    storageBucket: "project1mjpj.appspot.com",
-    messagingSenderId: "755858814706"
-  };
-  firebase.initializeApp(config);
-  
-  var database = firebase.database();
-  var uid;
-    
-  firebase.auth().onAuthStateChanged(function (fbUser) {
-    if (fbUser) {  
-        var user = firebase.auth().currentUser;
-        uid=user.uid;
-    }});
-    
-  
-  // Click handler for adding/editing new data//
-$("#prefExist").on("click", function(event) {
+
+  apiKey: "AIzaSyC1c1GiOESAxQ8-aEPGYH8Bf2VdsBoTXWw",
+  authDomain: "project1mjpj.firebaseapp.com",
+  databaseURL: "https://project1mjpj.firebaseio.com",
+  projectId: "project1mjpj",
+  storageBucket: "project1mjpj.appspot.com",
+  messagingSenderId: "755858814706"
+};
+firebase.initializeApp(config);
+
+var database = firebase.database();
+var uid;
+
+firebase.auth().onAuthStateChanged(function (fbUser) {
+  if (fbUser) {
+    var user = firebase.auth().currentUser;
+    uid = user.uid;
+  }
+});
+
+
+// Click handler for adding/editing new data//
+$("#prefExist").on("click", function (event) {
   event.preventDefault();
-  console.log("hello")
-  
-  window.open("Dashboard.html","_self")
+  //console.log("hello")
+
+  window.open("dashboard.html", "_self")
 })
 
-  $("#prefSubmit").on("click", function(event) {
-    event.preventDefault();
-    console.log("hello")
+$("#prefSubmit").on("click", function (event) {
+  event.preventDefault();
+  //console.log("hello")
+
 
   // Capture user inputs and store them into variables
   var newCalories = $('#caloriesInput').val().trim();
@@ -61,7 +62,9 @@ $("#prefExist").on("click", function(event) {
     $('#proteinInput').val("");
     $('#sugarInput').val("");
 
-  // Create local temporary object to hold the new data//
+
+    // Create local temporary object to hold the new data//
+
 
     var newData = {
       calories: newCalories,
@@ -70,13 +73,15 @@ $("#prefExist").on("click", function(event) {
       sugar: newSugar,
     };
 
-// Push to firebase//
 
-    database.ref("users/"+uid).update(newData);
-    console.log(newData);
+    // Push to firebase//
 
-    window.open("Dashboard.html","_self")
-} else {
-  $("#errorText").text("Please fill out all fields - no zeroes allowed")
-}
- })
+    database.ref("users/" + uid).update(newData);
+    //console.log(newData);
+
+    window.open("dashboard.html", "_self")
+  } else {
+    $("#errorText").text("Please fill out all fields - no zeroes allowed")
+  }
+})
+

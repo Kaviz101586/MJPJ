@@ -46,7 +46,6 @@ $(document).ready(function () {
         if (fbUser) {
             var user = firebase.auth().currentUser;
             uid = user.uid;
-            console.log(uid);
 
             database.ref("users/" + uid).once("value", function (userSnap) {
                 var snap = userSnap.val();
