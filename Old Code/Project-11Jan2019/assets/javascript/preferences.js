@@ -1,19 +1,5 @@
-/*
-Rutgers Full Stack coding Bootcamp Program Project
-Description: This Javascript preferences.js is tied to preferences.html page and is responsible for
-           1. Setting user preferences from Firebase
-           2. Allowing existing users to use their pre-populated preferences pulled directly from the Firebase
-           3. Passing the preferences through to the dashboard.html
-           4. Addressing any login/registration errors utilizing Bootstrap 4 Alerts
-
-Author : Mukti Pancholi, Jason Mapou, Prashanth Mijar, John Maquire
-Date: 12-Jan-2019
-*/
-
-
+// Initialize Firebase//
 console.log("hello"); 
-
-// Initialize Firebase
 
 var config = {
     apiKey: "AIzaSyC1c1GiOESAxQ8-aEPGYH8Bf2VdsBoTXWw",
@@ -25,8 +11,8 @@ var config = {
   };
   firebase.initializeApp(config);
   
-  var database = firebase.database();
-  var uid;
+var database = firebase.database();
+var uid;
     
   firebase.auth().onAuthStateChanged(function (fbUser) {
     if (fbUser) {  

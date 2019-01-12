@@ -18,7 +18,8 @@ td {
 }
 
 body {
-background: url("../images/restaurant_icons.png");
+  background: url("../images/restaurant_icons.png");
+  margin-bottom: 60px;
 }
 
 #spacer {
@@ -26,4 +27,16 @@ background: url("../images/restaurant_icons.png");
   height: 140px;
 }
 
+html {
+  position: relative;
+  min-height: 100%;
+}
 
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
