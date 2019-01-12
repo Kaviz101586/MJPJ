@@ -90,7 +90,7 @@ function signInSubmit() {
         return errorCaught = true;
     }).then(function () {
         if (!errorCaught) {
-            window.open("preferences.html", "_self")
+            window.open("dashboard.html", "_self")
         }
         else {
             errorCaught = false;
