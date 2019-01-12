@@ -8,7 +8,7 @@ _Sign in_, or _start a new account_, the enter the limits you would like to keep
 Use you devices location, or a location you set for a quick search of local restaurant menu items that fall under your set guidline! 
 
 Authors : __Mukti Pancholi__, __Jason Mapou__, __Prashanth Mijar__, __John Maquire__
-Date: 12-Jan-2019\
+Date: 12-Jan-2019
 
 _Powered by:_
 [__Nutritionix!__](https://www.nutritionix.com/business/api)
