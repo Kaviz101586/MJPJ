@@ -8,7 +8,7 @@ Description: This Javascript app.js is tied to dashboard.html page and is respon
             4. Building the dynamic webelements in search results table
             5. Providing option for user to go restaurant of his choice or go to the restaurant website.
             
-Author : Mukti Pancholi, Jason Mapou, Prashanth Mijar, John Maquire
+Author : Mukti Panchaal, Jason Mapou, Prashanth Mijar, John Maquire
 Date: 12-Jan-2019
 */
 
@@ -46,6 +46,7 @@ $(document).ready(function () {
         if (fbUser) {
             var user = firebase.auth().currentUser;
             uid = user.uid;
+            console.log(uid);
 
             database.ref("users/" + uid).once("value", function (userSnap) {
                 var snap = userSnap.val();
@@ -117,16 +118,21 @@ $(document).ready(function () {
     });
 
 
-    // The Go button click will take the user to mapquest page with the destination latitude and longitude information and current location
-    $(document).on("click", ".goBtn", function () {
-        event.preventDefault();
-        console.log("Destination LatLong are:" + ($(this).attr('destlatlong')));
-        window.location = "http://www.mapquest.com/embed/?q=" + ($(this).attr('destlatlong')) + "&maptype=hybrid&layer=traffic";
-    });
+    //JASON you can update this on click function to load the maps
+    // $(document).on("click", ".goBtn", function () {
+    //     event.preventDefault();
 
+    //     // var apikey = ZLTJ2TcrHRACk9jX7Q0aIG21cNlyQoL1
 
+    //     window.location='http://www.mapquest.com/directions?'+drive+'&zoom=1&maptype=hybrid&layer=traffic';
+    //     // <a href="http://www.mapquest.com/directions?"+drive+"&zoom=16&maptype=hybrid&layer=traffic"><img src="http://www.mapquestapi.com/staticmap/v4/getmap?
+    //     // key="+apikey+&type=map&scenter=undefined&ecenter=undefined&declutter=false&shapeformat=cmp&shape=undefined&vias=undefined&size=200,200" border="0"></a>
 
-    /* The Section below provides the collections of all the functions needed for this page */
+    
+    //     console.log("Coords are:" + ($(this).attr('coord')))
+    // });
+
+/* The Section below provides the collections of all the functions needed for this page */
 
     // this function displays values for the attributes stored in firebase under preferences section of search page
     function displayPreferences(calories, carbs, protein, sugar) {
@@ -145,7 +151,8 @@ $(document).ready(function () {
         for (i = 0; i < arr.length; i++) {
             // Below creates the new row
             var dist = (arr[i].distance / 1.609).toFixed(2);
-            var destLatLong = arr[i].loclat + "," + arr[i].loclng;
+        //    var dist = distan.toFixed(2);
+            var drive = ("saddr=" + lat + "," + long + "&daddr=" + arr[i].loclat + "," + arr[i].loclng);
             var v_retaurant_link = $("<a>").attr("href", arr[i].website).text(arr[i].restaurant);
             var newRow = $("<tr>").append(
                 $("<td>").text(arr[i].food),
@@ -153,11 +160,20 @@ $(document).ready(function () {
                 $("<td>").text(arr[i].location),
                 $("<td>").text(dist + "mi"),
                 $("<td>").text(arr[i].address),
-                $("<button>").text("GO!").addClass("goBtn btn btn-primary").attr("destLatLong", destLatLong));
+                $("<button>").text("GO!").addClass("goBtn btn btn-primary").attr("coord", drive));
+                console.log('drive :: ', drive);
+                console.log(".goBtn");         
 
             // Below appends the new row to the table
             $("#results-table > tbody").append(newRow);
 
+            $(document).on("click", ".goBtn", function () {
+                event.preventDefault();
+        
+                // var apikey = ZLTJ2TcrHRACk9jX7Q0aIG21cNlyQoL1
+        
+                window.location='http://www.mapquest.com/directions?'+drive+'&zoom=1&maptype=hybrid&layer=traffic';
+            });
         }
     }
 
@@ -169,7 +185,6 @@ $(document).ready(function () {
 
         locationURL = locationURL + lat + ',' + long + '&distance=' + distance + '&limit=' + limit;
 
-        $("#mapID").attr("src", "https://www.mapquestapi.com/staticmap/v5/map?key=ZLTJ2TcrHRACk9jX7Q0aIG21cNlyQoL1&center=" + lat + ',' + long);
         console.log("URL = " + locationURL);
 
         // Perfoming an AJAX GET request to our queryURL
@@ -312,7 +327,7 @@ $(document).ready(function () {
                     obj.website = Brand_Name_City_State_Website[j].website;
                     obj.distance = Brand_Name_City_State_Website[j].distance;
                     obj.address = Brand_Name_City_State_Website[j].address;
-                    obj.loclat = Brand_Name_City_State_Website[j].loclat,
+                    obj.loclat =  Brand_Name_City_State_Website[j].loclat,
                     obj.loclng = Brand_Name_City_State_Website[j].loclng
                 }
             }

@@ -1,0 +1,38 @@
+Steps after the Profile info:
+1) System will check your location. 
+    The return results will be the current lat/long location.  
+    <!DOCTYPE html>
+    <html>
+    <body>
+
+<p>Click the button to get your coordinates.</p>
+
+<button onclick="getLocation()">Try It</button>
+
+<p id="demo"></p>
+
+<script>
+var x = document.getElementById("demo");
+
+function getLocation() {
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(showPosition);
+} else {
+  x.innerHTML = "Geolocation is not supported by this browser.";
+}
+}
+
+function showPosition(position) {
+x.innerHTML = "Latitude: " + position.coords.latitude +
+"<br>Longitude: " + position.coords.longitude;
+}
+</script>
+
+</body>
+</html>
+
+b) If user does not provide current location than user has to provide an address. There will have to be a user input field for address.
+    The result will be lat/long location.
+
+2) The lat/long information will be sent to the nutrition api.
+3)     
