@@ -1,0 +1,27 @@
+#title {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    font-size: 48px;
+    color: green;
+    font-style: italic;
+}
+
+#results-table th,
+td {
+  display: inline-block;
+  width: 16.575%;
+}
+
+.card-header {
+    background-color: lightgray;
+    color: black;
+}
+
+body {
+background: url("../images/restaurant_icons.png");
+}
+
+#spacer {
+  padding-top: 140px;
+  height: 140px;
+}

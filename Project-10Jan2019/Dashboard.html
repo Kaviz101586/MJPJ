@@ -14,10 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
 
     <!-- JavaScript -->
-
-
-    <script src="app.js"></script>
-
+    <script src="assets/javascript/appMP4b.js"></script>
 
     <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
 </head>
@@ -27,7 +24,7 @@
         <!-- <nav class="navbar fixed-top navbar-expand-lg navbar-light " style="background-color: #5b90d6; font-weight: bold; color: white"> -->
         <nav class="navbar fixed-top navbar-expand-lg navbar-light" style="background-color: #5b90d6; color: white;">
             <div class="container">
-                <a class="navbar-brand text-center" href="#">Nutrition Personalized </a>
+                <a class="navbar-brand text-center" href="#">Happy Healthy Tummies</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -35,7 +32,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="login.html">Login &ensp;|</a>
+                            <a class="nav-link" href="index.html">Logout &ensp;|</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="preferences.html">Preferences &ensp;|</a>
@@ -61,8 +58,19 @@
     }
     
     body {
-    background: url("restaurant_icons.png");
+    background: url("assets/images/restaurant_icons.png");
   }
+  #displayPref{
+       display: flex;
+       flex-direction: row;
+       justify-content: flex-start;
+       flex-wrap: nowrap;
+       align-items: center;
+   }
+   #names, #figures {
+       padding-left: 20px;
+   }
+  
   </style>
 
 
@@ -114,7 +122,11 @@
                                 </div>
 
                                 <button class="btn btn-primary float-left" id="search-btn">Submit</button>
+
                             </form>
+
+                        </div>
+                        <div class="alert alert-light" role="alert" id="errorText">
                         </div>
                     </div>
                 </div>
@@ -123,93 +135,62 @@
                     <!-- Add custome  -->
                     <div class="card mb-4">
                         <div class="card-header">Preferences</div>
+                        <div id="displayPref">
+                            <div id="names">
+                                <p>Calories:</p>
+                                <p>Carbs:</p>
+                                <p>Protein:</p>
+                                <p>Sugars:</p>
+                            </div>
+                            <div id="figures">
+                                <p id="Calories"></p>
+                                <p id="Carbs"></p>
+                                <p id="Protein"></p>
+                                <p id="Sugars"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-mb-2">
-                                    <div class="card-body" id="textCalories">
-                                        Calories:
-                                    </div>
-                                </div>
-                                <div class="col-mb-2">
-                                    <div class="card-body" id="Calories">
-                                        1
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-mb-2">
-                                    <div class="card-body" id="textCarbs">
-                                        Carbs:
-                                    </div>
-                                </div>
-                                <div class="col-mb-2">
-                                    <div class="card-body" id="Carbs">
-                                        2
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-mb-2">
-                                    <div class="card-body" id="textProtein">
-                                        Protein:
-                                    </div>
-                                </div>
-                                <div class="col-mb-2">
-                                    <div class="card-body" id="Protein">
-                                        3
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-mb-2">
-                                    <div class="card-body" id="textSugars">
-                                        Sugars:
-                                    </div>
-                                </div>
-                                <div class="col-mb-2">
-                                    <div class="card-body" id="Sugars">
-                                        4
-                                    </div>
-                                </div>
+            </div>
+        </div>
+        </div>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <!-- Results Displayed-->
+                        <div class="card mb-12">
+                            <div class="card-header">Results</div>
+                            <div class="card-body">
+                                <table class="table table-sm table-hover" id='results-table'>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Food</th>
+                                            <th scope="col">Restaurant</th>
+                                            <th scope="col">Location</th>
+                                            <th scope="col">Distance</th>
+                                            <!--                                                 <th scope="col">Website</th> -->
+                                            <th scope="col">Address</th>
+                                            <th scope="col">Navigate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <br>
-            <br>
-            <br>
-            <br>
-            <div class="row">
-                <div class="col-md-12">
-
-                    <div class="row">
-
-                        <div class="col-md-12">
-                            <!-- Results Displayed-->
-                            <div class="card mb-12">
-                                <div class="card-header">Results</div>
-                                <div class="card-body">
-                                    <table class="table table-sm table-hover" id='results-table'>
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Food</th>
-                                                <th scope="col">Restaurant</th>
-                                                <th scope="col">Location</th>
-                                                <th scope="col">Website</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        </div>
 
     </body>
 
