@@ -1,0 +1,19 @@
+Cookie Info/Login Profile Set Up in Firebase.
+Checking for current cookie info from the browser.
+If it does not find it in cookies than user will be prompted to provide some information like profile id.
+Then a call will be made to Firebase to check if that user is there.
+If user is there than their info will be populated on screen.
+If it is not there than user will have to create a User ID.
+    - fill out some fields of preferences which saves it to Firebase with a unique profile Id.
+Read the profile info has to be displayed on page.
+Then user has to click/select the profile they want. 
+Once clicked the results will be displayed.   
+
+Firebase:
+    -structure of the database would be:
+        *type of food or dietary needs 
+        (*do research on the nutritionix about what food/dietary info it can provide (find another api within the site)
+
+Based on the selections within the user profile the next API will be fired. 
+
+        
