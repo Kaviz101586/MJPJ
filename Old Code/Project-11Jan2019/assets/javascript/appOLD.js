@@ -1,17 +1,3 @@
-/*
-Rutgers Full Stack coding Bootcamp Program Project
-Description: This Javascript app.js is tied to dashboard.html page and is responsible for 
-            1. Fetching user preferences from Firebase
-            2. Getting user location (lat/long co-ordinates)
-            3. Firing the nested Nutritionix API calls and building the JSON object array 
-               based on user preferences and user food keyword search selection made
-            4. Building the dynamic webelements in search results table
-            5. Providing option for user to go restaurant of his choice or go to the restaurant website.
-            
-Author : Mukti Pancholi, Jason Mapou, Prashanth Mijar, John Maquire
-Date: 12-Jan-2019
-*/
-
 var Brand_Name_City_State_Website; // the object that holds the AJAX response from the instant search that filters the products based on user location
 var si_Response; // the object that holds the AJAX response from the instant search that filters the products based on user preference value
 
@@ -37,11 +23,6 @@ $(document).ready(function () {
 
     var uid;
 
-    var ocdkey = "&key=e39eaae9080247218a11a430ebd3a003&limit=1&pretty=1";
-    var ocdbase = "https://api.opencagedata.com/geocode/v1/json?q=";
-    const limit = 50;
-    const distance = '10mi';
-
     firebase.auth().onAuthStateChanged(function (fbUser) {
         if (fbUser) {
             var user = firebase.auth().currentUser;
@@ -58,10 +39,53 @@ $(document).ready(function () {
         }
     });
 
-    // call the function to display the values of preferences on the search screen
+    // This 
     displayPreferences(firebase_calories, firebase_carbs, firebase_protein, firebase_sugar)
 
-    //  searching action invoked on the submit button click in search page
+    var ocdkey = "&key=e39eaae9080247218a11a430ebd3a003&limit=1&pretty=1";
+    var ocdbase = "https://api.opencagedata.com/geocode/v1/json?q=";
+    var userSearchQuery = 'app';
+    const limit = 50;
+    const distance = '10mi';
+
+    var lat;
+    var long;
+
+    function displayPreferences(calories, carbs, protein, sugar) {
+        $("#Calories").text(calories);
+        $("#Carbs").text(carbs);
+        $("#Protein").text(protein);
+        $("#Sugar").text(sugar);
+    }
+
+
+
+    function addToTable(arr) {
+        // clear table first
+        $("#results-table tbody tr").remove()
+
+
+        for (i = 0; i < arr.length; i++) {
+            // Below creates the new row
+            var distan = (Brand_Name_City_State_Website[i].distance / 1.609)
+            var dist = distan.toFixed(2)
+            var drive = ("saddr=" + lat + "," + long + "&daddr=" + Brand_Name_City_State_Website[i].loclat + "," + Brand_Name_City_State_Website[i].loclng);
+            var newRow = $("<tr>").append(
+                $("<td>").text(arr[i].food),
+                $("<td>").text(arr[i].restaurant),
+                $("<td>").text(arr[i].location),
+                $("<td>").text(dist + "mi"),
+                $("<td>").text(arr[i].address),
+                $("<button>").text("GO!").addClass("GO-btn").attr("coord", drive),
+                console.log('drive :: ', drive)
+            );
+
+            // Below appends the new row to the table
+            $("#results-table > tbody").append(newRow);
+        }
+    }
+
+    //  searching
     $("#search-btn").on("click", function (event) {
         console.log("search-btn click");
         event.preventDefault();
@@ -115,54 +139,18 @@ $(document).ready(function () {
         // if all entries valid, then call Prashanth' function to search
         newSearchCall(food, useMyLocation, address, city, state, zipcode);
 
+        // once function returns, need to update table with response
+        // addToTable(results);
     });
 
 
-    // The Go button click will take the user to mapquest page with the destination latitude and longitude information and current location
-    $(document).on("click", ".goBtn", function () {
-        event.preventDefault();
-        console.log("Destination LatLong are:" + ($(this).attr('destlatlong')));
-        window.location = "http://www.mapquest.com/embed/?q=" + ($(this).attr('destlatlong')) + "&maptype=hybrid&layer=traffic";
+    //JASON you can update this on click function to load the maps
+    $(document).on("click", ".GO-btn", function () {
+        console.log("Coords are:" + ($(this).attr('coord')))
     });
 
 
 
-    /* The Section below provides the collections of all the functions needed for this page */
-
-    // this function displays values for the attributes stored in firebase under preferences section of search page
-    function displayPreferences(calories, carbs, protein, sugar) {
-        $("#Calories").text(calories);
-        $("#Carbs").text(carbs);
-        $("#Protein").text(protein);
-        $("#Sugar").text(sugar);
-    }
-
-
-    // this function adds and displays the search results returned by API search result JSON array of objects
-    function addToTable(arr) {
-        // clear table first
-        $("#results-table tbody tr").remove();
-
-        for (i = 0; i < arr.length; i++) {
-            // Below creates the new row
-            var dist = (arr[i].distance / 1.609).toFixed(2);
-            var destLatLong = arr[i].loclat + "," + arr[i].loclng;
-            var v_retaurant_link = $("<a>").attr("href", arr[i].website).text(arr[i].restaurant);
-            var newRow = $("<tr>").append(
-                $("<td>").text(arr[i].food),
-                $("<td>").append(v_retaurant_link),
-                $("<td>").text(arr[i].location),
-                $("<td>").text(dist + "mi"),
-                $("<td>").text(arr[i].address),
-                $("<button>").text("GO!").addClass("goBtn btn btn-primary").attr("destLatLong", destLatLong));
-
-            // Below appends the new row to the table
-            $("#results-table > tbody").append(newRow);
-
-        }
-    }
-
-    // this function populates the search results of food, restaurants, location, distance based on user preferences
     function access_nutritionix_api(userSearchQuery, lat, long, distance, limit) {
         var appID = '88905904';
         var appKey = '61e818ca55274f66563f3835e3fe414e';
@@ -170,7 +158,6 @@ $(document).ready(function () {
 
         locationURL = locationURL + lat + ',' + long + '&distance=' + distance + '&limit=' + limit;
 
-        $("#mapID").attr("src", "https://www.mapquestapi.com/staticmap/v5/map?key=ZLTJ2TcrHRACk9jX7Q0aIG21cNlyQoL1&center=" + lat + ',' + long);
         console.log("URL = " + locationURL);
 
         // Perfoming an AJAX GET request to our queryURL
@@ -257,20 +244,18 @@ $(document).ready(function () {
             });
     };
 
-
-    // this function is called to have the lat/long position retrieved based on user selected option and pass it on to the Nutritionix API
     function newSearchCall(food, useMyLocation, address, city, state, zipcode) {
         userSearchQuery = food;
-        if (useMyLocation == true) { // if user allows system to track his current location this block of code executes
+        if (useMyLocation == true) {
             navigator.geolocation.getCurrentPosition(getPosition);
         }
-        else { // If user selects block my location then this block of code is executed and system uses the entered address to locate user position
+        else {
+            // call John's geocoding 
             var ocdURL = ocdbase + "," + address + "," + city + "," + state + "," + zipcode + ocdkey
             openGate(ocdURL);
         }
     }
 
-    // this is a callback function to getCurrentPosition() and will be called when user allows the system to trak his current position
     function getPosition(position) {
         lat = position.coords.latitude;
         long = position.coords.longitude;
@@ -279,7 +264,6 @@ $(document).ready(function () {
         access_nutritionix_api(userSearchQuery, lat, long, distance, limit);
     }
 
-    //this function is called if user does not want his location tracked and provides his current address (address, city, state or zip)
     function openGate(x) {
         $.ajax({
             url: x,
@@ -294,8 +278,7 @@ $(document).ready(function () {
             })
     }
 
-    // this function looks into 2 array (Brand_Name_City_State_Website, si_Response)
-    // of json objects and return only the records common to both based on brand
+    // this function looks into 2 array of json objects and return only the records common to both based on brand
     function consolidateArray() {
 
         var arrayList = [];
@@ -303,7 +286,9 @@ $(document).ready(function () {
 
         for (var i in si_Response) {
 
-            var obj = { food: si_Response[i].food };
+            var obj = {
+                food: si_Response[i].food
+            }
 
             for (var j in Brand_Name_City_State_Website) {
                 if (Brand_Name_City_State_Website[j].brand === si_Response[i].brand) {
@@ -313,14 +298,14 @@ $(document).ready(function () {
                     obj.website = Brand_Name_City_State_Website[j].website;
                     obj.distance = Brand_Name_City_State_Website[j].distance;
                     obj.address = Brand_Name_City_State_Website[j].address;
-                    obj.loclat = Brand_Name_City_State_Website[j].loclat,
-                    obj.loclng = Brand_Name_City_State_Website[j].loclng
                 }
             }
 
             arrayList.push(obj);
             console.log("This is the final arrayList values " + i + " - " + JSON.stringify(arrayList[i]));
         }
+
         return arrayList;
     }
+
 }) // end document ready
