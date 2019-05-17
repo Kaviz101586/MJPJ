@@ -17,7 +17,7 @@ Date: 12-Jan-2019
 _Powered by:_
 [__Nutritionix!__](https://www.nutritionix.com/business/api)
 
-_Data Handleing by:_
+_Data Handling by:_
 [__Google FireBase__](https://firebase.google.com/)
 
 _Geocoding by:_
